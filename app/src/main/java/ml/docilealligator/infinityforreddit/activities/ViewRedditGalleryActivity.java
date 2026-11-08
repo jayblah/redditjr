@@ -266,8 +266,10 @@ public class ViewRedditGalleryActivity extends AppCompatActivity
         autoplayMedia = shouldAutoplayMedia();
         // Settings > Post > Gallery. With the first on, a swipe left goes back to the posts and a swipe
         // right opens the post and its comments, as it does with the second.
-        verticalSwipe = sharedPreferences.getBoolean(SharedPreferencesUtils.GALLERY_VERTICAL_SWIPE, false);
         boolean scrollList = sharedPreferences.getBoolean(SharedPreferencesUtils.GALLERY_SCROLLING_LIST, false);
+        // The two are alternatives; the settings screen keeps one of them off, and if a saved pair has
+        // both on, the scrolling list is what opens.
+        verticalSwipe = !scrollList && sharedPreferences.getBoolean(SharedPreferencesUtils.GALLERY_VERTICAL_SWIPE, false);
         showImageNumbers = sharedPreferences.getBoolean(SharedPreferencesUtils.GALLERY_IMAGE_NUMBERS, true);
         binding.viewPagerViewRedditGalleryActivity.setVertical(verticalSwipe);
         binding.viewPagerViewRedditGalleryActivity.setKeepsDrag(this::isPictureZoomedIn);

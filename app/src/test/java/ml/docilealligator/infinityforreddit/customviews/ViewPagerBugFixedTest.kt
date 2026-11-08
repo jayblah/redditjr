@@ -126,6 +126,22 @@ class ViewPagerBugFixedTest {
     }
 
     @Test
+    fun `a vertical gallery leaves a drag to a page that keeps it`() {
+        pager.setVertical(true)
+        pager.setKeepsDrag { true }
+        swipeUp()
+        assertEquals(0, pager.currentItem)
+    }
+
+    @Test
+    fun `a vertical gallery pages even when the page asks to be left alone`() {
+        pager.setVertical(true)
+        pager.getChildAt(0).parent.requestDisallowInterceptTouchEvent(true)
+        swipeUp()
+        assertEquals(1, pager.currentItem)
+    }
+
+    @Test
     fun `a vertical gallery ignores a sideways drag`() {
         pager.setVertical(true)
         swipeLeft()

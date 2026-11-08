@@ -46,6 +46,8 @@ public class PostPreferenceFragment extends CustomFontPreferenceFragmentCompat {
         SwitchPreference hideTheNumberOfCommentsSwitch = findPreference(SharedPreferencesUtils.HIDE_THE_NUMBER_OF_COMMENTS);
         SwitchPreference hideTextPostContentSwitch = findPreference(SharedPreferencesUtils.HIDE_TEXT_POST_CONTENT);
         SwitchPreference fixedHeightPreviewInCardSwitch = findPreference(SharedPreferencesUtils.FIXED_HEIGHT_PREVIEW_IN_CARD);
+        SwitchPreference galleryVerticalSwipeSwitch = findPreference(SharedPreferencesUtils.GALLERY_VERTICAL_SWIPE);
+        SwitchPreference galleryScrollingListSwitch = findPreference(SharedPreferencesUtils.GALLERY_SCROLLING_LIST);
 
         if (defaultPostLayoutList != null) {
             defaultPostLayoutList.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -154,5 +156,25 @@ public class PostPreferenceFragment extends CustomFontPreferenceFragmentCompat {
                 return true;
             });
         }
+
+        if (galleryVerticalSwipeSwitch != null && galleryScrollingListSwitch != null) {
+            // Two ways of going through a gallery; a gallery can only be gone through one of them. If
+            // both were somehow on, the scrolling list is what the gallery opens in.
+            if (galleryScrollingListSwitch.isChecked()) {
+                galleryVerticalSwipeSwitch.setChecked(false);
+            }
+            turnOffWhenOtherTurnsOn(galleryVerticalSwipeSwitch, galleryScrollingListSwitch);
+            turnOffWhenOtherTurnsOn(galleryScrollingListSwitch, galleryVerticalSwipeSwitch);
+        }
+    }
+
+    /** Turning {@code switchPreference} on turns {@code other} off. */
+    private static void turnOffWhenOtherTurnsOn(SwitchPreference switchPreference, SwitchPreference other) {
+        switchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+            if ((Boolean) newValue) {
+                other.setChecked(false);
+            }
+            return true;
+        });
     }
 }

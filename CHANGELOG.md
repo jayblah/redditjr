@@ -2,6 +2,16 @@
 
 ---
 
+8.3.3.9.1.31 / 2026-11-8
+============
+**Changed**
+* Swipe Up and Down Through a Gallery and Scrolling Gallery are now alternatives: turning one on turns the other off
+
+**Fixed**
+* Swipe Up and Down Through a Gallery: the gallery now takes an up or down drag itself, whatever the picture under the finger asks of it, and a long picture that opens filling the screen is no longer taken for a zoomed one
+
+---
+
 8.3.3.9.1.30 / 2026-11-8
 ============
 **Fixed**

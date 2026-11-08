@@ -43,6 +43,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.loader.ImageLoader;
+import com.github.piasy.biv.view.BigImageView;
 import com.github.piasy.biv.loader.glide.GlideImageLoader;
 import java.io.File;
 import java.util.Objects;
@@ -62,6 +63,7 @@ import ml.docilealligator.infinityforreddit.bottomsheetfragments.CopyTextBottomS
 import ml.docilealligator.infinityforreddit.bottomsheetfragments.SetAsWallpaperBottomSheetFragment;
 import ml.docilealligator.infinityforreddit.bottomsheetfragments.UrlMenuBottomSheetFragment;
 import ml.docilealligator.infinityforreddit.customviews.GlideGifImageViewFactory;
+import ml.docilealligator.infinityforreddit.customviews.ZoomableGifImageView;
 import ml.docilealligator.infinityforreddit.databinding.FragmentViewRedditGalleryImageOrGifBinding;
 import ml.docilealligator.infinityforreddit.post.Post;
 import ml.docilealligator.infinityforreddit.services.DownloadMediaService;
@@ -94,6 +96,8 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
     private boolean isFallback = false;
     private Handler handler;
     private int currentRotation = 0; // Track current rotation in degrees (0, 90, 180, 270)
+    /** The scale the picture first sat at on screen; see isZoomedIn. 0 until it has loaded. */
+    private float restingScale;
     private FragmentViewRedditGalleryImageOrGifBinding binding;
     ViewGalleryViewModel viewGalleryViewModel;
 
@@ -172,6 +176,7 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
                                 view.setOrientation(currentRotation);
                             }
                             view.resetScaleAndCenter();
+                            restingScale = view.getScale();
                         }
 
                         @Override
@@ -336,12 +341,24 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
     }
 
     /**
-     * Whether the picture is zoomed in, where a sideways drag pans it rather than swiping the
-     * gallery away.
+     * Whether the picture is zoomed in, where a drag pans it rather than swiping the gallery away.
+     * Zoomed is relative to how the picture first sat on screen, which is not always the smallest
+     * scale it can take: a long image is laid out to fill the width.
      */
     public boolean isZoomedIn() {
         SubsamplingScaleImageView ssiv = binding.imageViewViewRedditGalleryImageOrGifFragment.getSSIV();
-        return ssiv != null && ssiv.isReady() && ssiv.getScale() > ssiv.getMinScale() * 1.02f;
+        if (ssiv != null && ssiv.isReady()) {
+            float resting = restingScale > 0 ? restingScale : ssiv.getMinScale();
+            return ssiv.getScale() > resting * 1.02f;
+        }
+        BigImageView bigImageView = binding.imageViewViewRedditGalleryImageOrGifFragment;
+        for (int i = 0; i < bigImageView.getChildCount(); i++) {
+            View child = bigImageView.getChildAt(i);
+            if (child instanceof ZoomableGifImageView) {
+                return ((ZoomableGifImageView) child).getZoom() > 1.00001f;
+            }
+        }
+        return false;
     }
 
     private void applyRotation() {
@@ -350,6 +367,7 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
             // Static images: let the subsampling view re-render at the new orientation
             ssiv.setOrientation(currentRotation);
             ssiv.resetScaleAndCenter();
+            restingScale = ssiv.getScale();
         } else {
             // Animated GIFs are rendered by BigImageView's image-view factory, not the
             // subsampling view, so rotate the whole widget at the view level.
