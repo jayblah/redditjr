@@ -46,7 +46,7 @@ import ml.docilealligator.infinityforreddit.Infinity;
 import ml.docilealligator.infinityforreddit.R;
 import ml.docilealligator.infinityforreddit.SaveMemoryCenterInisdeDownsampleStrategy;
 import ml.docilealligator.infinityforreddit.activities.ViewImgurMediaActivity;
-import ml.docilealligator.infinityforreddit.asynctasks.SaveBitmapImageToFile;
+import ml.docilealligator.infinityforreddit.asynctasks.CopyImageFile;
 import ml.docilealligator.infinityforreddit.bottomsheetfragments.SetAsWallpaperBottomSheetFragment;
 import ml.docilealligator.infinityforreddit.customviews.GlideGifImageViewFactory;
 import ml.docilealligator.infinityforreddit.databinding.FragmentViewImgurImageBinding;
@@ -406,16 +406,16 @@ public class ViewImgurImageFragment extends Fragment {
     private void shareImage() {
         Bundle arguments = getArguments();
         String postTitle = arguments != null ? arguments.getString(ViewImgurMediaActivity.EXTRA_POST_TITLE_KEY) : null;
-        glide.asBitmap().load(imgurMedia.getLink()).into(new CustomTarget<Bitmap>() {
+        glide.downloadOnly().load(imgurMedia.getLink()).into(new CustomTarget<File>() {
 
             @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                 File cacheDir = Utils.getCacheDir(activity);
                 if (cacheDir != null) {
                     Toast.makeText(activity, R.string.save_image_first, Toast.LENGTH_SHORT).show();
-                    SaveBitmapImageToFile.saveBitmapImageToFile(mExecutor, new Handler(), resource, cacheDir.getPath(),
+                    CopyImageFile.copyImageFile(mExecutor, new Handler(), resource, cacheDir.getPath(),
                             MediaFileNameUtils.getDownloadFileName(imgurMedia, postTitle),
-                            new SaveBitmapImageToFile.SaveBitmapImageToFileListener() {
+                            new CopyImageFile.CopyImageFileListener() {
                                 @Override
                                 public void saveSuccess(File imageFile) {
                                     Uri uri = FileProvider.getUriForFile(activity,

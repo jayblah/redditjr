@@ -56,7 +56,7 @@ import ml.docilealligator.infinityforreddit.R;
 import ml.docilealligator.infinityforreddit.SaveMemoryCenterInisdeDownsampleStrategy;
 import ml.docilealligator.infinityforreddit.SetAsWallpaperCallback;
 import ml.docilealligator.infinityforreddit.WallpaperSetter;
-import ml.docilealligator.infinityforreddit.asynctasks.SaveBitmapImageToFile;
+import ml.docilealligator.infinityforreddit.asynctasks.CopyImageFile;
 import ml.docilealligator.infinityforreddit.asynctasks.SaveGIFToFile;
 import ml.docilealligator.infinityforreddit.bottomsheetfragments.SetAsWallpaperBottomSheetFragment;
 import ml.docilealligator.infinityforreddit.customviews.GlideGifImageViewFactory;
@@ -532,16 +532,16 @@ public class ViewImageOrGifActivity extends AppCompatActivity
     }
 
     private void shareImage() {
-        glide.asBitmap().load(mImageUrl).into(new CustomTarget<Bitmap>() {
+        glide.downloadOnly().load(mImageUrl).into(new CustomTarget<File>() {
 
             @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                 File cacheDir = Utils.getCacheDir(ViewImageOrGifActivity.this);
                 if (cacheDir != null) {
                     Toast.makeText(ViewImageOrGifActivity.this, R.string.save_image_first, Toast.LENGTH_SHORT).show();
-                    SaveBitmapImageToFile.saveBitmapImageToFile(mExecutor, handler, resource,
+                    CopyImageFile.copyImageFile(mExecutor, handler, resource,
                             cacheDir.getPath(), buildDownloadFileName(),
-                            new SaveBitmapImageToFile.SaveBitmapImageToFileListener() {
+                            new CopyImageFile.CopyImageFileListener() {
                                 @Override
                                 public void saveSuccess(File imageFile) {
                                     Uri uri = FileProvider.getUriForFile(ViewImageOrGifActivity.this,

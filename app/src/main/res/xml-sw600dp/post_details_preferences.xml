@@ -72,4 +72,10 @@
         app:key="show_gallery_media_as_grid"
         app:title="@string/settings_show_gallery_media_as_grid" />
 
+    <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontSwitchPreference
+        app:defaultValue="false"
+        app:key="hide_vote_buttons"
+        app:title="@string/settings_hide_vote_buttons_title"
+        app:summary="@string/settings_hide_vote_buttons_summary" />
+
 </PreferenceScreen>

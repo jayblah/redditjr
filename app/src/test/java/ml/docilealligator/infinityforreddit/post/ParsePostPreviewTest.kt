@@ -404,4 +404,18 @@ class ParsePostPreviewTest {
         assertFalse(post.embedsInlineBodyMedia())
         assertTrue(post.previews.isEmpty())
     }
+
+    @Test
+    fun `a video post whose media is gone parses as a plain link instead of failing`() {
+        // A removed crosspost's parent still says is_video but has no media object. Reading
+        // media.reddit_video threw, so the whole post was dropped from the feed.
+        val json = postJson(
+            url = "https://v.redd.it/abc123",
+            domain = "v.redd.it"
+        ).apply { put("is_video", true) }
+
+        val post = ParsePost.parseBasicData(json)
+
+        assertEquals(Post.NO_PREVIEW_LINK_TYPE, post.postType)
+    }
 }
