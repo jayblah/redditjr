@@ -151,8 +151,6 @@ public class SearchResultActivity extends BaseActivity implements SortTypeSelect
     @Inject
     Executor mExecutor;
     @Nullable
-    @Nullable
-    @Nullable
     private String mQuery;
     @Nullable
     private String mSearchInSubredditOrUserName;

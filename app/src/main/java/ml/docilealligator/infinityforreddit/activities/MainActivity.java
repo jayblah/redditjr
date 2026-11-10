@@ -242,8 +242,6 @@ public class MainActivity extends BaseActivity implements SortTypeSelectionCallb
     // Sticky record of whether the bottom app bar is hidden. Landscape uses a navigation
     // rail (no bottom app bar), so we can't read translationY there; this field carries the
     // portrait hidden-state across the landscape intermediate so a P→L→P round trip keeps it.
-    @SuppressWarnings("NullAway.Init")
-    @Nullable
     private boolean mFetchUserInfoSuccess = false;
     private boolean mFetchSubscriptionsSuccess = false;
     private boolean mFetchMultiredditsSuccess = false;
