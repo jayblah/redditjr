@@ -7,18 +7,22 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.webkit.WebView;
 
-public class LollipopBugFixedWebView extends WebView {
+/**
+ * A WebView that can ask the keyboard not to learn from what is typed into it, for the anonymous
+ * login and any page opened without an account.
+ */
+public class IncognitoKeyboardWebView extends WebView {
     private boolean isAnonymous;
 
-    public LollipopBugFixedWebView(Context context) {
+    public IncognitoKeyboardWebView(Context context) {
         super(context);
     }
 
-    public LollipopBugFixedWebView(Context context, AttributeSet attrs) {
+    public IncognitoKeyboardWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public LollipopBugFixedWebView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public IncognitoKeyboardWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
