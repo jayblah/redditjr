@@ -2,6 +2,13 @@
 
 ---
 
+8.3.3.9.1.33 / 2026-11-9
+============
+**Changed**
+* Removed unused drawing-order bookkeeping from the feed's swipe-action touch helper. Nothing was meant to change
+
+---
+
 8.3.3.9.1.32 / 2026-11-9
 ============
 **Fixed**
