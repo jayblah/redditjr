@@ -168,8 +168,10 @@ public class ViewImgurVideoFragment extends Fragment {
         if (savedInstanceState != null) {
             playbackSpeed = savedInstanceState.getInt(PLAYBACK_SPEED_STATE);
             currentRotation = savedInstanceState.getInt(ROTATION_STATE);
+        } else {
+            playbackSpeed = SharedPreferencesUtils.getInt(mSharedPreferences, SharedPreferencesUtils.DEFAULT_PLAYBACK_SPEED, "100");
         }
-        setPlaybackSpeed(SharedPreferencesUtils.getInt(mSharedPreferences, SharedPreferencesUtils.DEFAULT_PLAYBACK_SPEED, "100"));
+        setPlaybackSpeed(playbackSpeed);
         preparePlayer(savedInstanceState);
 
         binding.getTitleTextView().setText(getString(R.string.view_imgur_media_activity_video_label,

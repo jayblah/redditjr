@@ -169,8 +169,10 @@ public class ViewRedditGalleryVideoFragment extends Fragment {
         if (savedInstanceState != null) {
             playbackSpeed = savedInstanceState.getInt(PLAYBACK_SPEED_STATE);
             currentRotation = savedInstanceState.getInt(ROTATION_STATE);
+        } else {
+            playbackSpeed = SharedPreferencesUtils.getInt(mSharedPreferences, SharedPreferencesUtils.DEFAULT_PLAYBACK_SPEED, "100");
         }
-        SharedPreferencesUtils.getInt(mSharedPreferences, SharedPreferencesUtils.DEFAULT_PLAYBACK_SPEED, "100");
+        setPlaybackSpeed(playbackSpeed);
         preparePlayer(savedInstanceState);
 
         binding.getTitleTextView().setText(getString(R.string.view_reddit_gallery_activity_video_label,
