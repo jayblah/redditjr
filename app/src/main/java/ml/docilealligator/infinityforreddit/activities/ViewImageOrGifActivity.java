@@ -512,7 +512,6 @@ public class ViewImageOrGifActivity extends AppCompatActivity
 
         extras.putString(DownloadMediaService.EXTRA_FILE_NAME, buildDownloadFileName());
 
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadMediaService.constructJobInfo(this, 5000000, extras);
         ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

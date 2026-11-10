@@ -749,7 +749,6 @@ public class SubmitCrosspostActivity extends BaseActivity implements FlairBottom
                     binding.receivePostReplyNotificationsSwitchMaterialSubmitCrosspostActivity.isChecked() ? 1 : 0);
             extras.putInt(SubmitPostService.EXTRA_POST_TYPE, SubmitPostService.EXTRA_POST_TYPE_CROSSPOST);
 
-            // TODO: contentEstimatedBytes
             JobInfo jobInfo = SubmitPostService.constructJobInfo(this, title.length() * 2L + 20000, extras);
             ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

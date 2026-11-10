@@ -1388,7 +1388,6 @@ public class ViewVideoActivity extends AppCompatActivity
             extras.putInt(DownloadRedditVideoService.EXTRA_IS_SHARE, 1);
         }
 
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadRedditVideoService.constructJobInfo(this, 5000000, extras);
         ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
     }
@@ -1575,7 +1574,6 @@ public class ViewVideoActivity extends AppCompatActivity
                 extras.putString(DownloadMediaService.EXTRA_SUBREDDIT_NAME, viewVideoViewModel.getSubredditName());
                 extras.putInt(DownloadMediaService.EXTRA_IS_NSFW, viewVideoViewModel.isNSFW() ? 1 : 0);
 
-                //TODO: contentEstimatedBytes
                 JobInfo jobInfo = DownloadMediaService.constructJobInfo(this, 5000000, extras);
                 ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
             } else {
@@ -1586,7 +1584,6 @@ public class ViewVideoActivity extends AppCompatActivity
 
                 extras.putString(DownloadRedditVideoService.EXTRA_FILE_NAME, fileName);
 
-                //TODO: contentEstimatedBytes
                 JobInfo jobInfo = DownloadRedditVideoService.constructJobInfo(this, 5000000, extras);
                 ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
             }
@@ -1624,7 +1621,6 @@ public class ViewVideoActivity extends AppCompatActivity
         extras.putString(DownloadMediaService.EXTRA_SUBREDDIT_NAME, viewVideoViewModel.getSubredditName());
         extras.putInt(DownloadMediaService.EXTRA_IS_NSFW, viewVideoViewModel.isNSFW() ? 1 : 0);
 
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadMediaService.constructJobInfo(this, 5000000, extras);
         ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

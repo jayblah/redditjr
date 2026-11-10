@@ -718,7 +718,6 @@ public class PostOptionsBottomSheetFragment extends LandscapeExpandedRoundedBott
             extras.putString(DownloadMediaService.EXTRA_SUBREDDIT_NAME, mPost.getSubredditName());
             extras.putInt(DownloadMediaService.EXTRA_IS_NSFW, mPost.isNSFW() ? 1 : 0);
 
-            //TODO: contentEstimatedBytes
             JobInfo jobInfo = DownloadMediaService.constructJobInfo(mBaseActivity, 5000000, extras);
             ((JobScheduler) mBaseActivity.getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 
@@ -739,7 +738,6 @@ public class PostOptionsBottomSheetFragment extends LandscapeExpandedRoundedBott
                 extras.putString(DownloadRedditVideoService.EXTRA_FILE_NAME,
                         MediaFileNameUtils.getDownloadFileName(mPost, 0));
 
-                //TODO: contentEstimatedBytes
                 JobInfo jobInfo = DownloadRedditVideoService.constructJobInfo(mBaseActivity, 5000000, extras);
                 ((JobScheduler) mBaseActivity.getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

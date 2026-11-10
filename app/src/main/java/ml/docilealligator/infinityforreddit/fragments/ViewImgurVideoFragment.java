@@ -346,7 +346,6 @@ public class ViewImgurVideoFragment extends Fragment {
             return;
         }
 
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadMediaService.constructJobInfo(activity, 5000000, imgurMedia, subredditName, isNsfw, title);
         ((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 
