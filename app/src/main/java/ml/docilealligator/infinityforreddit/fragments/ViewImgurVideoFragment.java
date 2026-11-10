@@ -22,6 +22,7 @@ public class ViewImgurVideoFragment extends ViewVideoFragmentBase {
 
     public static final String EXTRA_IMGUR_VIDEO = "EIV";
 
+    @SuppressWarnings("NullAway.Init") // set in readVideoArguments, before anything reads it
     private ImgurMedia imgurMedia;
 
     public ViewImgurVideoFragment() {

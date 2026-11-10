@@ -24,6 +24,7 @@ public class ViewRedditGalleryVideoFragment extends ViewVideoFragmentBase {
     public static final String EXTRA_SUBREDDIT_NAME = "ESN";
     public static final String EXTRA_IS_NSFW = "EIN";
 
+    @SuppressWarnings("NullAway.Init") // set in readVideoArguments, before anything reads it
     private Post.Gallery galleryVideo;
 
     public ViewRedditGalleryVideoFragment() {
