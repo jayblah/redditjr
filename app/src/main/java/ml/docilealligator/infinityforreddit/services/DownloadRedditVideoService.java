@@ -683,20 +683,7 @@ public class DownloadRedditVideoService extends JobService {
 
                 try {
                     final Uri contentUri = MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-                    uri = contentResolver.insert(contentUri, contentValues);
-                    if (uri == null) {
-                        // Same fallback as the SAF path: a destination that will not take the
-                        // name's non-ASCII characters gets an ASCII one rather than no file.
-                        String asciiName = MediaFileNameUtils.toAsciiFilename(destinationFileName);
-                        if (!asciiName.equals(destinationFileName)) {
-                            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, asciiName);
-                            uri = contentResolver.insert(contentUri, contentValues);
-                        }
-                    }
-
-                    if (uri == null) {
-                        throw new IOException("Failed to create new MediaStore record.");
-                    }
+                    uri = DownloadStorage.insertMediaStoreRecord(contentResolver, contentUri, contentValues, destinationFileName);
 
                     try (OutputStream stream = contentResolver.openOutputStream(uri);
                          InputStream in = new FileInputStream(srcPath)) {
@@ -743,22 +730,8 @@ public class DownloadRedditVideoService extends JobService {
         return Uri.parse(destinationFileUriString);
     }
 
-    /**
-     * Returns true if the app still holds a persisted write grant for the given tree URI. SAF
-     * permissions can be lost (revoked by the user, or originally granted to a different app build),
-     * so checking before use lets us fall back cleanly instead of hitting a SecurityException.
-     */
     private boolean hasPersistedWritePermission(Uri treeUri) {
-        try {
-            for (UriPermission permission : getContentResolver().getPersistedUriPermissions()) {
-                if (permission.isWritePermission() && permission.getUri().equals(treeUri)) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            Log.e("DownloadRedditVideo", "Failed to read persisted URI permissions: " + e.getMessage());
-        }
-        return false;
+        return DownloadStorage.hasPersistedWritePermission(getContentResolver(), treeUri, "DownloadRedditVideo");
     }
 
     private void showReselectDownloadFolderToast() {
@@ -767,38 +740,8 @@ public class DownloadRedditVideoService extends JobService {
                         R.string.download_folder_permission_lost, Toast.LENGTH_LONG).show());
     }
 
-    /**
-     * Returns a destination for the default video location, used when the user's chosen folder is
-     * unavailable. On Android Q+ this is a MediaStore {@code RELATIVE_PATH}; on older versions it is
-     * an absolute file path (with parent directories created and name collisions resolved).
-     */
     private String getDefaultDownloadPath(@Nullable String subredditName, String fileName) {
-        String topDir = Environment.DIRECTORY_MOVIES;
-        String subFolder = (subredditName != null && !subredditName.isEmpty()) ? subredditName : null;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // MediaStore resolves name collisions on its own for RELATIVE_PATH destinations.
-            return subFolder == null ? topDir : topDir + File.separator + subFolder;
-        }
-
-        File baseDir = Environment.getExternalStoragePublicDirectory(topDir);
-        if (subFolder != null) {
-            baseDir = new File(baseDir, subFolder);
-        }
-        if (!baseDir.exists()) {
-            baseDir.mkdirs();
-        }
-
-        File outFile = new File(baseDir, fileName);
-        int dotIndex = fileName.lastIndexOf('.');
-        String baseName = (dotIndex == -1) ? fileName : fileName.substring(0, dotIndex);
-        String extension = (dotIndex == -1) ? "" : fileName.substring(dotIndex);
-        int num = 1;
-        while (outFile.exists()) {
-            outFile = new File(baseDir, baseName + " (" + num + ")" + extension);
-            num++;
-        }
-        return outFile.getAbsolutePath();
+        return DownloadStorage.getDefaultDownloadPath(Environment.DIRECTORY_MOVIES, subredditName, fileName);
     }
 
     private void downloadFinished(JobParameters parameters, NotificationCompat.Builder builder, @Nullable Uri destinationFileUri, int errorCode, int randomNotificationIdOffset) {
