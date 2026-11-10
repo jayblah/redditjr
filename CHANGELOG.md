@@ -2,6 +2,13 @@
 
 ---
 
+8.3.3.9.1.34 / 2026-11-10
+============
+**Fixed**
+* With Mute Videos on, a video you had unmuted was muted again when you came back to it, even with Remember Mute on. Mute Videos is now a starting state like Mute Autoplaying Videos, so what you choose with the mute button is remembered. Mute NSFW Videos still keeps NSFW videos quiet
+
+---
+
 8.3.3.9.1.33 / 2026-11-9
 ============
 **Fixed**
