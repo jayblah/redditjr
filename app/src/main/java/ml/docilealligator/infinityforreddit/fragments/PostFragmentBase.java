@@ -72,7 +72,6 @@ import ml.docilealligator.infinityforreddit.events.ChangeHideTheNumberOfComments
 import ml.docilealligator.infinityforreddit.events.ChangeHideTheNumberOfVotesEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeLongPressToHideToolbarInCompactLayoutEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeMuteAutoplayingVideosEvent;
-import ml.docilealligator.infinityforreddit.events.ChangeMuteNSFWVideoEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeMuteVideoEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeNSFWBlurEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeNetworkStatusEvent;
@@ -549,14 +548,9 @@ public abstract class PostFragmentBase extends Fragment {
         return mVideoMuteManager.getMasterMutingOption();
     }
 
-    /** Mute NSFW Videos on an NSFW post: silent whatever the remembered choice is. */
-    public final boolean forcesMute(boolean isNsfw) {
-        return mVideoMuteManager.forcesMute(isNsfw);
-    }
-
     /** Whether an autoplaying video begins silent. */
-    public final boolean startsMuted(boolean isNsfw) {
-        return mVideoMuteManager.startsMuted(isNsfw);
+    public final boolean startsMuted() {
+        return mVideoMuteManager.startsMuted();
     }
 
     public final void videoAutoplayChangeMutingOption(boolean isMute) {
@@ -1230,13 +1224,6 @@ public abstract class PostFragmentBase extends Fragment {
     public void onChangeStartAutoplayVisibleAreaOffsetEvent(ChangeStartAutoplayVisibleAreaOffsetEvent changeStartAutoplayVisibleAreaOffsetEvent) {
         if (getPostAdapter() != null) {
             getPostAdapter().setStartAutoplayVisibleAreaOffset(changeStartAutoplayVisibleAreaOffsetEvent.startAutoplayVisibleAreaOffset);
-            refreshAdapter();
-        }
-    }
-
-    @Subscribe
-    public void onChangeMuteNSFWVideoEvent(ChangeMuteNSFWVideoEvent changeMuteNSFWVideoEvent) {
-        if (getPostAdapter() != null) {
             refreshAdapter();
         }
     }

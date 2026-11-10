@@ -984,7 +984,7 @@ public class PostDetailRecyclerViewAdapterNew extends RecyclerView.Adapter<Recyc
                     // silently re-muted a video they had just unmuted.
                     ((PostDetailBaseVideoAutoplayViewHolder) holder).setVolume(manuallyMuted ? 0f : 1f);
                 } else if (!((PostDetailBaseVideoAutoplayViewHolder) holder).isManuallyPaused) {
-                    ((PostDetailBaseVideoAutoplayViewHolder) holder).setVolume(mVideoMuteManager.startsMuted(mPost.isNSFW()) ? 0f : 1f);
+                    ((PostDetailBaseVideoAutoplayViewHolder) holder).setVolume(mVideoMuteManager.startsMuted() ? 0f : 1f);
                 }
 
                 /*if (mPost.isRedgifs() && !mPost.isLoadedStreamableVideoAlready()) {
@@ -3043,10 +3043,7 @@ public class PostDetailRecyclerViewAdapterNew extends RecyclerView.Adapter<Recyc
                                 String mimeType = trackGroups.get(i).getTrackFormat(0).sampleMimeType;
                                 if (mimeType != null && mimeType.contains("audio")) {
                                     if (mVideoMuteManager.getMasterMutingOption() != null) {
-                                        // Remembering the reader's choice never lifts Mute NSFW
-                                        // Videos, as it does not in the feed.
-                                        volume = mVideoMuteManager.getMasterMutingOption()
-                                                || mVideoMuteManager.forcesMute(mPost.isNSFW()) ? 0f : 1f;
+                                        volume = mVideoMuteManager.getMasterMutingOption() ? 0f : 1f;
                                     }
                                     helper.setVolume(volume);
                                     muteButton.setVisibility(View.VISIBLE);

@@ -973,8 +973,7 @@ public class ViewVideoActivity extends AppCompatActivity
         player.setPlayWhenReady(true);
         viewVideoViewModel.setWasPlaying(true);
 
-        boolean muteVideo = mSharedPreferences.getBoolean(SharedPreferencesUtils.MUTE_VIDEO, false) ||
-                (mSharedPreferences.getBoolean(SharedPreferencesUtils.MUTE_NSFW_VIDEO, false) && viewVideoViewModel.isNSFW());
+        boolean muteVideo = mSharedPreferences.getBoolean(SharedPreferencesUtils.MUTE_VIDEO, false);
 
         if (savedInstanceState != null) {
             if (viewVideoViewModel.isMute()) {

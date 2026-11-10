@@ -56,7 +56,7 @@ import ml.docilealligator.infinityforreddit.Infinity;
 import ml.docilealligator.infinityforreddit.R;
 import ml.docilealligator.infinityforreddit.SaveMemoryCenterInisdeDownsampleStrategy;
 import ml.docilealligator.infinityforreddit.activities.ViewRedditGalleryActivity;
-import ml.docilealligator.infinityforreddit.asynctasks.SaveBitmapImageToFile;
+import ml.docilealligator.infinityforreddit.asynctasks.CopyImageFile;
 import ml.docilealligator.infinityforreddit.asynctasks.SaveGIFToFile;
 import ml.docilealligator.infinityforreddit.bottomsheetfragments.CopyTextBottomSheetFragment;
 import ml.docilealligator.infinityforreddit.bottomsheetfragments.SetAsWallpaperBottomSheetFragment;
@@ -503,15 +503,15 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
     }
 
     private void shareImage() {
-        glide.asBitmap().load(media.hasFallback() ? media.fallbackUrl : media.url).into(new CustomTarget<Bitmap>() {
+        glide.downloadOnly().load(media.hasFallback() ? media.fallbackUrl : media.url).into(new CustomTarget<File>() {
             @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+            public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                 File cacheDir = Utils.getCacheDir(activity);
                 if (cacheDir != null) {
                     Toast.makeText(activity, R.string.save_image_first, Toast.LENGTH_SHORT).show();
-                    SaveBitmapImageToFile.saveBitmapImageToFile(mExecutor, handler, resource, cacheDir.getPath(),
+                    CopyImageFile.copyImageFile(mExecutor, handler, resource, cacheDir.getPath(),
                             getShareFileName(),
-                            new SaveBitmapImageToFile.SaveBitmapImageToFileListener() {
+                            new CopyImageFile.CopyImageFileListener() {
                                 @Override
                                 public void saveSuccess(File imageFile) {
                                     Uri uri = FileProvider.getUriForFile(activity,

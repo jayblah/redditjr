@@ -9,12 +9,6 @@
         app:title="@string/settings_mute_video_title" />
 
     <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontSwitchPreference
-        app:defaultValue="false"
-        app:key="mute_nsfw_video"
-        app:icon="@drawable/ic_mute_preferences_day_night_24dp"
-        app:title="@string/settings_mute_nsfw_video_title" />
-
-    <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontSwitchPreference
         app:defaultValue="true"
         app:key="mute_autoplaying_videos"
         app:icon="@drawable/ic_mute_preferences_day_night_24dp"
@@ -24,6 +18,17 @@
         app:defaultValue="false"
         app:key="remember_muting_option_in_post_feed"
         app:title="@string/settings_remember_mute" />
+
+    <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontSwitchPreference
+        app:defaultValue="false"
+        app:key="video_player_automatic_landscape_orientation"
+        app:title="@string/settings_video_player_automatic_landscape_orientation" />
+
+    <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontSwitchPreference
+        app:defaultValue="true"
+        app:key="play_short_clip_hosts_inline"
+        app:title="@string/settings_play_short_clip_hosts_inline_title"
+        app:summary="@string/settings_play_short_clip_hosts_inline_summary" />
 
     <ml.docilealligator.infinityforreddit.customviews.preference.CustomFontSwitchPreference
         app:defaultValue="true"

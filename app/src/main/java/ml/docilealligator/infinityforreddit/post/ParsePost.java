@@ -384,6 +384,12 @@ public class ParsePost {
         }
     }
 
+    /** Whether {@code data} carries the {@code media.reddit_video} object a Reddit video post plays from. */
+    private static boolean hasRedditVideo(JSONObject data) {
+        JSONObject media = data.optJSONObject(JSONUtils.MEDIA_KEY);
+        return media != null && media.optJSONObject(JSONUtils.REDDIT_VIDEO_KEY) != null;
+    }
+
     private static String normalizeRedditPreviewHost(String url, boolean linksToReddit) {
         if (linksToReddit && url != null) {
             return url.replace("://external-preview.redd.it/", "://preview.redd.it/");
@@ -452,7 +458,9 @@ public class ParsePost {
 
                     post.setPreviews(previews);
                 } else {
-                    if (isVideo) {
+                    // A removed crosspost's parent can say is_video with no media object, which has
+                    // nothing to play; it is an ordinary link post then.
+                    if (isVideo && hasRedditVideo(data)) {
                         //No preview video post
                         JSONObject redditVideoObject = data.getJSONObject(JSONUtils.MEDIA_KEY).getJSONObject(JSONUtils.REDDIT_VIDEO_KEY);
                         int postType = Post.VIDEO_TYPE;
@@ -518,7 +526,7 @@ public class ParsePost {
                 }
             }
 
-            if (isVideo) {
+            if (isVideo && hasRedditVideo(data)) {
                 //Video post
                 JSONObject redditVideoObject = data.getJSONObject(JSONUtils.MEDIA_KEY).getJSONObject(JSONUtils.REDDIT_VIDEO_KEY);
                 int postType = Post.VIDEO_TYPE;

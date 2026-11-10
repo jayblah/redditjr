@@ -17,7 +17,6 @@ import ml.docilealligator.infinityforreddit.events.ChangeAutoplayNsfwVideosEvent
 import ml.docilealligator.infinityforreddit.events.ChangeAutoplayVideoControllerUIEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeEasierToWatchInFullScreenEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeMuteAutoplayingVideosEvent;
-import ml.docilealligator.infinityforreddit.events.ChangeMuteNSFWVideoEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeMuteVideoEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeRememberMutingOptionInPostFeedEvent;
 import ml.docilealligator.infinityforreddit.events.ChangeStartAutoplayVisibleAreaOffsetEvent;
@@ -41,7 +40,6 @@ public class VideoPreferenceFragment extends CustomFontPreferenceFragmentCompat 
         SwitchPreference muteAutoplayingVideosSwitchPreference = findPreference(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS);
         SwitchPreference rememberMutingOptionInPostFeedSwitchPreference = findPreference(SharedPreferencesUtils.REMEMBER_MUTING_OPTION_IN_POST_FEED);
         SwitchPreference muteVideosSwitchPreference = findPreference(SharedPreferencesUtils.MUTE_VIDEO);
-        SwitchPreference muteNSFWVideosSwitchPreference = findPreference(SharedPreferencesUtils.MUTE_NSFW_VIDEO);
         SwitchPreference autoplayNsfwVideosSwitchPreference = findPreference(SharedPreferencesUtils.AUTOPLAY_NSFW_VIDEOS);
         SwitchPreference autoplayCommentGifSwitchPreference = findPreference(SharedPreferencesUtils.AUTOPLAY_COMMENT_GIF);
         SwitchPreference easierToWatchInFullScreenSwitchPreference = findPreference(SharedPreferencesUtils.EASIER_TO_WATCH_IN_FULL_SCREEN);
@@ -85,13 +83,6 @@ public class VideoPreferenceFragment extends CustomFontPreferenceFragmentCompat 
         if (muteVideosSwitchPreference != null) {
             muteVideosSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 EventBus.getDefault().post(new ChangeMuteVideoEvent((Boolean) newValue));
-                return true;
-            });
-        }
-
-        if (muteNSFWVideosSwitchPreference != null) {
-            muteNSFWVideosSwitchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                EventBus.getDefault().post(new ChangeMuteNSFWVideoEvent((Boolean) newValue));
                 return true;
             });
         }
