@@ -9,6 +9,7 @@
 
 **Changed**
 * The Imgur and Reddit gallery video pages now share one implementation, removing about 900 lines of near-identical code. Nothing was meant to change, except that a download or share that cannot start now says so with a message instead of doing nothing
+* Renamed LollipopBugFixedWebView to IncognitoKeyboardWebView, which says what it does. Nothing was meant to change
 * Removed unused drawing-order bookkeeping from the feed's swipe-action touch helper. Nothing was meant to change
 * Removed the sticky scroll anchor from the feed. It only existed to survive the lossy rotation of the old multi-column feed; with one column the feed restores its place after a rotation from the most visible row alone. Nothing was meant to change
 
