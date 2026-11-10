@@ -193,14 +193,7 @@ public class CommentsListingFragment extends Fragment implements FragmentCommuni
                     return WindowInsetsCompat.CONSUMED;
                 }
             });
-            //binding.recyclerViewCommentsListingFragment.setPadding(0, 0, 0, mActivity.getNavBarHeight());
-        }/* else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && mSharedPreferences.getBoolean(SharedPreferencesUtils.IMMERSIVE_INTERFACE_KEY, true)) {
-            int navBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (navBarResourceId > 0) {
-                binding.recyclerViewCommentsListingFragment.setPadding(0, 0, 0, resources.getDimensionPixelSize(navBarResourceId));
-            }
-        }*/
+        }
 
         boolean enableSwipeAction = SwipeActionPreferences.commentSwipeEnabled(mSharedPreferences);
         swipeActionPainter = new SwipeActionPainter(mActivity, customThemeWrapper, true);

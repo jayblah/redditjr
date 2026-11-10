@@ -92,15 +92,7 @@ public class MultiRedditListingFragment extends Fragment implements FragmentComm
                     return WindowInsetsCompat.CONSUMED;
                 }
             });
-            //binding.recyclerViewMultiRedditListingFragment.setPadding(0, 0, 0, mActivity.getNavBarHeight());
-        }/* else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && mSharedPreferences.getBoolean(SharedPreferencesUtils.IMMERSIVE_INTERFACE_KEY, true)) {
-            Resources resources = getResources();
-            int navBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (navBarResourceId > 0) {
-                binding.recyclerViewMultiRedditListingFragment.setPadding(0, 0, 0, resources.getDimensionPixelSize(navBarResourceId));
-            }
-        }*/
+        }
 
         Bundle arguments = getArguments();
         boolean isGettingMultiredditInfo = arguments != null && arguments.getBoolean(EXTRA_IS_MULTIREDDIT_SELECTION, false);

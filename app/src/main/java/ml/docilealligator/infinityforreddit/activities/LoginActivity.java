@@ -75,8 +75,6 @@ public class LoginActivity extends BaseActivity {
     CustomThemeWrapper mCustomThemeWrapper;
     @Inject
     Executor mExecutor;
-    @SuppressWarnings("NullAway.Init")
-    private String authCode;
     private ActivityLoginBinding binding;
 
     @Override
@@ -215,87 +213,8 @@ public class LoginActivity extends BaseActivity {
                 }
 
                 Uri uri = Uri.parse(url);
-                OAuthLoginHelper.RedirectResult redirect = OAuthLoginHelper.classifyRedirect(uri.getQueryParameter("code"),
-                        OAuthLoginHelper.consumePendingState(LoginActivity.this, uri.getQueryParameter("state")),
-                        uri.getQueryParameter("error"));
-                switch (redirect.action) {
-                    case EXCHANGE_CODE: {
-                        authCode = Objects.requireNonNull(redirect.authCode);
-
-                        Map<String, String> params = new HashMap<>();
-                        params.put(APIUtils.GRANT_TYPE_KEY, "authorization_code");
-                        params.put("code", authCode);
-                        params.put(APIUtils.REDIRECT_URI_KEY, APIUtils.REDIRECT_URI);
-
-                        RedditAPI api = mRetrofit.create(RedditAPI.class);
-                        Call<String> accessTokenCall = api.getAccessToken(APIUtils.getHttpBasicAuthHeader(getApplicationContext()), params);
-                        accessTokenCall.enqueue(new Callback<>() {
-                            @Override
-                            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                                        OAuthLoginHelper.TokenResult result =
-                                                OAuthLoginHelper.classifyTokenResponse(response);
-                                        if (!result.isSuccess()) {
-                                            Toast.makeText(LoginActivity.this, OAuthLoginHelper.describeFailure(getApplicationContext(), result), Toast.LENGTH_LONG).show();
-                                            finish();
-                                            return;
-                                        }
-                                        String accessToken = Objects.requireNonNull(result.accessToken);
-                                        String refreshToken = Objects.requireNonNull(result.refreshToken);
-
-                                        FetchMyInfo.fetchAccountInfo(mExecutor, mHandler, mOauthRetrofit,
-                                                mRedditDataRoomDatabase, accessToken,
-                                                new FetchMyInfo.FetchMyInfoListener() {
-                                                    @Override
-                                                    public void onFetchMyInfoSuccess(String name, String profileImageUrl, @Nullable String bannerImageUrl, int karma, boolean isMod) {
-                                                        mCurrentAccountSharedPreferences.edit().putString(SharedPreferencesUtils.ACCESS_TOKEN, accessToken)
-                                                            .putString(SharedPreferencesUtils.ACCOUNT_NAME, name)
-                                                            .putString(SharedPreferencesUtils.ACCOUNT_IMAGE_URL, profileImageUrl).apply();
-                                                        mCurrentAccountSharedPreferences.edit().remove(SharedPreferencesUtils.SUBSCRIBED_THINGS_SYNC_TIME).apply();
-                                                        ParseAndInsertNewAccount.parseAndInsertNewAccount(mExecutor, new Handler(), name, accessToken, refreshToken, profileImageUrl, bannerImageUrl,
-                                                                karma, isMod, authCode, mRedditDataRoomDatabase.accountDao(),
-                                                                () -> {
-                                                                    EventBus.getDefault().post(new NewUserLoggedInEvent());
-                                                                    finish();
-                                                                });
-                                                    }
-
-                                                    @Override
-                                                    public void onFetchMyInfoFailed(boolean parseFailed) {
-                                                        if (parseFailed) {
-                                                            Toast.makeText(LoginActivity.this, R.string.parse_user_info_error, Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            Toast.makeText(LoginActivity.this, R.string.cannot_fetch_user_info, Toast.LENGTH_SHORT).show();
-                                                        }
-
-                                                        finish();
-                                                    }
-                                        });
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                                OAuthLoginHelper.TokenResult result = OAuthLoginHelper.classifyThrowable(t);
-                                Toast.makeText(LoginActivity.this, OAuthLoginHelper.describeFailure(getApplicationContext(), result), Toast.LENGTH_LONG).show();
-                                finish();
-                            }
-                        });
-                        break;
-                    }
-                    case ACCESS_DENIED:
-                        Toast.makeText(LoginActivity.this, R.string.access_denied, Toast.LENGTH_SHORT).show();
-                        finish();
-                        break;
-                    case OAUTH_ERROR:
-                        Toast.makeText(LoginActivity.this, getString(R.string.oauth_error_reddit_error, redirect.errorValue), Toast.LENGTH_LONG).show();
-                        finish();
-                        break;
-                    case STATE_MISMATCH:
-                    case NONE:
-                    default:
-                        Toast.makeText(LoginActivity.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
-                        finish();
-                        break;
-                }
+                new OAuthLoginFlow(LoginActivity.this, mRetrofit, mOauthRetrofit, mRedditDataRoomDatabase,
+                        mCurrentAccountSharedPreferences, mExecutor, mHandler).handleRedirect(uri);
 
                 return true;
             }

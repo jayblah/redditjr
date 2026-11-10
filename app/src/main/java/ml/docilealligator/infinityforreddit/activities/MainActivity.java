@@ -242,10 +242,6 @@ public class MainActivity extends BaseActivity implements SortTypeSelectionCallb
     // Sticky record of whether the bottom app bar is hidden. Landscape uses a navigation
     // rail (no bottom app bar), so we can't read translationY there; this field carries the
     // portrait hidden-state across the landscape intermediate so a P→L→P round trip keeps it.
-    @SuppressWarnings("NullAway.Init")
-    private Runnable autoCompleteRunnable;
-    @Nullable
-    private Call<String> subredditAutocompleteCall;
     private boolean mFetchUserInfoSuccess = false;
     private boolean mFetchSubscriptionsSuccess = false;
     private boolean mFetchMultiredditsSuccess = false;
@@ -1695,142 +1691,12 @@ public class MainActivity extends BaseActivity implements SortTypeSelectionCallb
     }
 
     private void goToSubreddit() {
-        View rootView = getLayoutInflater().inflate(R.layout.dialog_go_to_thing_edit_text,
-                binding.includedAppBar.coordinatorLayoutMainActivity, false);
-        TextInputEditText thingEditText = rootView.findViewById(R.id.text_input_edit_text_go_to_thing_edit_text);
-        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_go_to_thing_edit_text);
-        SubredditAutocompleteRecyclerViewAdapter adapter = new SubredditAutocompleteRecyclerViewAdapter(
-                this, mCustomThemeWrapper, subredditData -> {
-            Utils.hideKeyboard(this);
-            Intent intent = new Intent(MainActivity.this, ViewSubredditDetailActivity.class);
-            intent.putExtra(ViewSubredditDetailActivity.EXTRA_SUBREDDIT_NAME_KEY, subredditData.getName());
-            startActivity(intent);
-        });
-        recyclerView.setAdapter(adapter);
-
-        thingEditText.requestFocus();
-        Utils.showKeyboard(this, new Handler(), thingEditText);
-        thingEditText.setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i == EditorInfo.IME_ACTION_DONE) {
-                Utils.hideKeyboard(this);
-                Intent subredditIntent = new Intent(this, ViewSubredditDetailActivity.class);
-                subredditIntent.putExtra(ViewSubredditDetailActivity.EXTRA_SUBREDDIT_NAME_KEY, Objects.requireNonNull(thingEditText.getText()).toString());
-                startActivity(subredditIntent);
-                return true;
-            }
-            return false;
-        });
-
-        boolean nsfw = mNsfwAndSpoilerSharedPreferences.getBoolean(AccountScope.key(accountName, SharedPreferencesUtils.NSFW_BASE), false);
-        Handler handler = new Handler();
-        thingEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (subredditAutocompleteCall != null && subredditAutocompleteCall.isExecuted()) {
-                    subredditAutocompleteCall.cancel();
-                }
-                if (autoCompleteRunnable != null) {
-                    handler.removeCallbacks(autoCompleteRunnable);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String currentQuery = editable.toString().trim();
-                if (!currentQuery.isEmpty()) {
-                    autoCompleteRunnable = () -> {
-                        boolean anonymous = accountName.equals(Account.ANONYMOUS_ACCOUNT);
-                        Retrofit autocompleteRetrofit = anonymous ? mRetrofit : mOauthRetrofit;
-                        Map<String, String> autocompleteHeaders = anonymous ? new HashMap<>() : APIUtils.getOAuthHeader(accessToken);
-                        subredditAutocompleteCall = autocompleteRetrofit.create(RedditAPI.class).subredditAutocomplete(autocompleteHeaders,
-                                currentQuery, nsfw);
-                        subredditAutocompleteCall.enqueue(new Callback<>() {
-                            @Override
-                            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                                subredditAutocompleteCall = null;
-                                if (response.isSuccessful() && !call.isCanceled()) {
-                                    ParseSubredditData.parseSubredditListingData(mExecutor, handler,
-                                            response.body(), nsfw, new ParseSubredditData.ParseSubredditListingDataListener() {
-                                                @Override
-                                                public void onParseSubredditListingDataSuccess(ArrayList<SubredditData> subredditData, String after) {
-                                                    adapter.setSubreddits(subredditData);
-                                                }
-
-                                                @Override
-                                                public void onParseSubredditListingDataFail() {
-
-                                                }
-                                            });
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                                subredditAutocompleteCall = null;
-                            }
-                        });
-                    };
-
-                    handler.postDelayed(autoCompleteRunnable, 500);
-                }
-            }
-        });
-        new MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialogTheme)
-                .setTitle(R.string.go_to_subreddit)
-                .setView(rootView)
-                .setPositiveButton(R.string.ok, (dialogInterface, i)
-                        -> {
-                    Utils.hideKeyboard(this);
-                    Intent subredditIntent = new Intent(this, ViewSubredditDetailActivity.class);
-                    subredditIntent.putExtra(ViewSubredditDetailActivity.EXTRA_SUBREDDIT_NAME_KEY, Objects.requireNonNull(thingEditText.getText()).toString());
-                    startActivity(subredditIntent);
-                })
-                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                    Utils.hideKeyboard(this);
-                })
-                .setOnDismissListener(dialogInterface -> {
-                    Utils.hideKeyboard(this);
-                })
-                .show();
+        GoToDialogs.goToSubreddit(this, binding.includedAppBar.coordinatorLayoutMainActivity, mRetrofit, mOauthRetrofit,
+                mExecutor, mCustomThemeWrapper, mNsfwAndSpoilerSharedPreferences);
     }
 
     private void goToUser() {
-        View rootView = getLayoutInflater().inflate(R.layout.dialog_go_to_thing_edit_text, binding.includedAppBar.coordinatorLayoutMainActivity, false);
-        TextInputEditText thingEditText = rootView.findViewById(R.id.text_input_edit_text_go_to_thing_edit_text);
-        thingEditText.requestFocus();
-        Utils.showKeyboard(this, new Handler(), thingEditText);
-        thingEditText.setOnEditorActionListener((textView, i, keyEvent) -> {
-            if (i == EditorInfo.IME_ACTION_DONE) {
-                Utils.hideKeyboard(this);
-                Intent userIntent = new Intent(this, ViewUserDetailActivity.class);
-                userIntent.putExtra(ViewUserDetailActivity.EXTRA_USER_NAME_KEY, Objects.requireNonNull(thingEditText.getText()).toString());
-                startActivity(userIntent);
-                return true;
-            }
-            return false;
-        });
-        new MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialogTheme)
-                .setTitle(R.string.go_to_user)
-                .setView(rootView)
-                .setPositiveButton(R.string.ok, (dialogInterface, i)
-                        -> {
-                    Utils.hideKeyboard(this);
-                    Intent userIntent = new Intent(this, ViewUserDetailActivity.class);
-                    userIntent.putExtra(ViewUserDetailActivity.EXTRA_USER_NAME_KEY, Objects.requireNonNull(thingEditText.getText()).toString());
-                    startActivity(userIntent);
-                })
-                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                    Utils.hideKeyboard(this);
-                })
-                .setOnDismissListener(dialogInterface -> {
-                    Utils.hideKeyboard(this);
-                })
-                .show();
+        GoToDialogs.goToUser(this, binding.includedAppBar.coordinatorLayoutMainActivity);
     }
 
 

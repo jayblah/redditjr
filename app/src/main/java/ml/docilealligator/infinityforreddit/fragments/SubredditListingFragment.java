@@ -111,14 +111,7 @@ public class SubredditListingFragment extends Fragment implements FragmentCommun
                     return WindowInsetsCompat.CONSUMED;
                 }
             });
-            //binding.recyclerViewSubredditListingFragment.setPadding(0, 0, 0, mActivity.getNavBarHeight());
-        }/* else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && mSharedPreferences.getBoolean(SharedPreferencesUtils.IMMERSIVE_INTERFACE_KEY, true)) {
-            int navBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (navBarResourceId > 0) {
-                binding.recyclerViewSubredditListingFragment.setPadding(0, 0, 0, resources.getDimensionPixelSize(navBarResourceId));
-            }
-        }*/
+        }
 
         mLinearLayoutManager = new LinearLayoutManagerBugFixed(getActivity());
         binding.recyclerViewSubredditListingFragment.setLayoutManager(mLinearLayoutManager);

@@ -92,15 +92,7 @@ public class SubscribedSubredditsListingFragment extends Fragment implements Fra
                     return WindowInsetsCompat.CONSUMED;
                 }
             });
-            //binding.recyclerViewSubscribedSubredditsListingFragment.setPadding(0, 0, 0, mActivity.getNavBarHeight());
-        }/* else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && mSharedPreferences.getBoolean(SharedPreferencesUtils.IMMERSIVE_INTERFACE_KEY, true)) {
-            Resources resources = getResources();
-            int navBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (navBarResourceId > 0) {
-                binding.recyclerViewSubscribedSubredditsListingFragment.setPadding(0, 0, 0, resources.getDimensionPixelSize(navBarResourceId));
-            }
-        }*/
+        }
 
         if (mActivity.accountName.equals(Account.ANONYMOUS_ACCOUNT)) {
             binding.swipeRefreshLayoutSubscribedSubredditsListingFragment.setEnabled(false);

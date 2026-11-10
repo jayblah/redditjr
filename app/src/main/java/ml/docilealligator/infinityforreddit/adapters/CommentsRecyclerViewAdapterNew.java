@@ -1598,64 +1598,8 @@ public class CommentsRecyclerViewAdapterNew extends ListAdapter<Comment, Recycle
                 Comment comment = getItem(getBindingAdapterPosition());
                 if (comment != null) {
                     int position = getBindingAdapterPosition();
-                    if (mAccountName.equals(Account.ANONYMOUS_ACCOUNT)) {
-                        // Logged out there is no account to save to, so the save is kept on the
-                        // device and nothing is sent.
-                        boolean saved = AnonymousSavedComments.toggle(mActivity, mAccountName, comment);
-                        saveButton.setIconResource(saved
-                                ? R.drawable.ic_bookmark_grey_24dp : R.drawable.ic_bookmark_border_grey_24dp);
-                        Toast.makeText(mActivity, saved ? R.string.comment_saved_success
-                                : R.string.comment_unsaved_success, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (comment.isSaved()) {
-                        comment.setSaved(false);
-                        SaveThing.unsaveThing(mOauthRetrofit, mAccessToken, comment.getFullName(), new SaveThing.SaveThingListener() {
-                            @Override
-                            public void success() {
-                                comment.setSaved(false);
-                                LocalSaved.onUnsaved(mActivity, mAccountName, comment.getFullName());
-                                SavedCommentCacheNotifier.onSavedCommentChanged();
-                                if (getBindingAdapterPosition() == position) {
-                                    saveButton.setIconResource(R.drawable.ic_bookmark_border_grey_24dp);
-                                }
-                                Toast.makeText(mActivity, R.string.comment_unsaved_success, Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failed() {
-                                comment.setSaved(true);
-                                if (getBindingAdapterPosition() == position) {
-                                    saveButton.setIconResource(R.drawable.ic_bookmark_grey_24dp);
-                                }
-                                Toast.makeText(mActivity, R.string.comment_unsaved_failed, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        comment.setSaved(true);
-                        SaveThing.saveThing(mOauthRetrofit, mAccessToken, comment.getFullName(), new SaveThing.SaveThingListener() {
-                            @Override
-                            public void success() {
-                                comment.setSaved(true);
-                                LocalSaved.onSaved(mActivity, mOauthRetrofit, mAccessToken,
-                                        mAccountName, comment.getFullName(), comment.getLinkId());
-                                SavedCommentCacheNotifier.onSavedCommentChanged();
-                                if (getBindingAdapterPosition() == position) {
-                                    saveButton.setIconResource(R.drawable.ic_bookmark_grey_24dp);
-                                }
-                                Toast.makeText(mActivity, R.string.comment_saved_success, Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void failed() {
-                                comment.setSaved(false);
-                                if (getBindingAdapterPosition() == position) {
-                                    saveButton.setIconResource(R.drawable.ic_bookmark_border_grey_24dp);
-                                }
-                                Toast.makeText(mActivity, R.string.comment_saved_failed, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
+                    CommentSaveToggle.toggleSave(mActivity, mAccountName, mOauthRetrofit, mAccessToken,
+                            comment, saveButton, position, this::getBindingAdapterPosition);
                 }
             });
 
