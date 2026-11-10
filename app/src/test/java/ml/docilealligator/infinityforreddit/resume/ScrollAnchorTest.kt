@@ -161,7 +161,7 @@ class ScrollAnchorTest {
         layOut(recyclerView)
 
         val topmost = ScrollAnchor.captureTopmost(recyclerView)
-        val mostVisible = ScrollAnchor.capture(recyclerView, ScrollAnchor.NO_POSITION, 0)
+        val mostVisible = ScrollAnchor.capture(recyclerView)
 
         assertEquals(6, topmost.position)
         assertTrue("the most-visible row is further down the list",
@@ -176,36 +176,5 @@ class ScrollAnchorTest {
         layOut(recyclerView)
 
         assertFalse(ScrollAnchor.captureTopmost(recyclerView).isValid)
-    }
-
-    @Test
-    fun `capture keeps the sticky anchor while it is still on screen`() {
-        // A multi-column round trip goes through an intermediate where the layout manager snaps the
-        // anchor to the top. Re-measuring there would overwrite the good offset with the snapped
-        // one, so an anchor that is still rendered keeps the offset it was captured with.
-        val recyclerView = list()
-        ScrollAnchor.scrollTo(recyclerView, 10, -40)
-        layOut(recyclerView)
-
-        val sticky = ScrollAnchor.capture(recyclerView, 11, -1234)
-
-        assertEquals(11, sticky.position)
-        assertEquals(-1234, sticky.offset)
-    }
-
-    @Test
-    fun `an empty list carries the sticky anchor through untouched`() {
-        // A capture against a list with nothing rendered says nothing about where the user was, so
-        // it must not reset what the last one recorded.
-        val recyclerView = RecyclerView(context)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        FrameLayout(context).addView(recyclerView, VIEWPORT_HEIGHT, VIEWPORT_HEIGHT)
-        layOut(recyclerView)
-
-        val anchor = ScrollAnchor.capture(recyclerView, 5, -60)
-
-        assertFalse(anchor.isValid)
-        assertEquals(5, anchor.stickyPosition)
-        assertEquals(-60, anchor.stickyOffset)
     }
 }

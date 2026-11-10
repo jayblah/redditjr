@@ -26,20 +26,10 @@ object ScrollAnchor {
     /** How long the list may stay hidden waiting for a scroll that never lands. */
     private const val REVEAL_TIMEOUT_MS = 1000L
 
-    /**
-     * A captured anchor, plus the sticky anchor to carry into the next capture.
-     *
-     * [stickyPosition] / [stickyOffset] are not always the same as [position] / [offset]: when the
-     * previous anchor is still on screen its ORIGINAL offset is kept rather than re-measured. A
-     * multi-column round trip goes through an intermediate where
-     * StaggeredGridLayoutManager's gap handling snaps the anchor to the top, and re-measuring
-     * there would overwrite the good offset with the snapped one.
-     */
+    /** A captured anchor: a row and where it sits relative to the list's top padding. */
     class Anchor(
         @JvmField val position: Int,
         @JvmField val offset: Int,
-        @JvmField val stickyPosition: Int,
-        @JvmField val stickyOffset: Int,
     ) {
         val isValid: Boolean
             get() = position != NO_POSITION
@@ -48,14 +38,11 @@ object ScrollAnchor {
     /**
      * Pick the row the user perceives as their "main content" and measure where it sits.
      *
-     * Preference order:
-     * 1. [stickyPosition] from a previous capture, if it is still rendered -- preserves the user's
-     *    intended item and its offset across lossy intermediates (see [Anchor]).
-     * 2. The child with the largest visible height in the viewport. Ties go to the smaller adapter
-     *    position, which preserves the "top of the row" feel in multi-column layouts.
+     * That is the child with the largest visible height in the viewport; ties go to the smaller
+     * adapter position.
      */
     @JvmStatic
-    fun capture(rv: RecyclerView, stickyPosition: Int, stickyOffset: Int): Anchor {
+    fun capture(rv: RecyclerView): Anchor {
         val paddingTop = rv.paddingTop
         val lm = rv.layoutManager
         val viewportBottom = rv.height - rv.paddingBottom
@@ -63,7 +50,6 @@ object ScrollAnchor {
         var bestAnchorPos = NO_POSITION
         var bestAnchorOffset = 0
         var bestVisible = -1
-        var stickyVisible = false
 
         for (i in 0 until rv.childCount) {
             val child = rv.getChildAt(i) ?: continue
@@ -88,21 +74,10 @@ object ScrollAnchor {
                 bestAnchorOffset = childOffset
                 bestVisible = visible
             }
-            if (pos == stickyPosition) {
-                stickyVisible = true
-            }
         }
 
-        return when {
-            // Anchor unchanged: keep the sticky offset (the original, un-snapped one).
-            stickyVisible -> Anchor(stickyPosition, stickyOffset, stickyPosition, stickyOffset)
-            // Anchor changed (the user scrolled away): adopt the most-visible item, measure fresh.
-            bestAnchorPos != NO_POSITION ->
-                Anchor(bestAnchorPos, bestAnchorOffset, bestAnchorPos, bestAnchorOffset)
-            // Nothing rendered. The sticky anchor is carried through untouched rather than reset:
-            // a capture against an empty list says nothing about where the user was.
-            else -> Anchor(NO_POSITION, 0, stickyPosition, stickyOffset)
-        }
+        // With nothing rendered, bestAnchorPos is still NO_POSITION and the anchor is invalid.
+        return Anchor(bestAnchorPos, bestAnchorOffset)
     }
 
     /**
@@ -143,7 +118,7 @@ object ScrollAnchor {
                 bestOffset = decoratedStart - paddingTop
             }
         }
-        return Anchor(bestPos, bestOffset, bestPos, bestOffset)
+        return Anchor(bestPos, bestOffset)
     }
 
     /**
