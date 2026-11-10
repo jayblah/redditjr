@@ -38,7 +38,7 @@ class VideoMuteManagerTest {
     }
 
     @Test
-    fun `Mute Videos silences autoplay whatever Mute Autoplaying says`() {
+    fun `Mute Videos starts autoplay muted whatever Mute Autoplaying says`() {
         set(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, false)
         set(SharedPreferencesUtils.MUTE_VIDEO, true)
         assertTrue(manager.startsMuted(false))
@@ -53,14 +53,22 @@ class VideoMuteManagerTest {
     }
 
     @Test
-    fun `a remembered unmute does not lift Mute Videos or Mute NSFW`() {
+    fun `a remembered unmute does not lift Mute NSFW`() {
         set(SharedPreferencesUtils.MUTE_NSFW_VIDEO, true)
         manager.rememberMuteOption = true
         manager.isMuted = false
         assertFalse(manager.startsMuted(false))
         assertTrue(manager.startsMuted(true))
+    }
+
+    @Test
+    fun `a remembered unmute beats Mute Videos and Mute Autoplaying`() {
         set(SharedPreferencesUtils.MUTE_VIDEO, true)
-        assertTrue(manager.startsMuted(false))
+        set(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, true)
+        manager.rememberMuteOption = true
+        assertTrue("before any tap the settings decide", manager.startsMuted(false))
+        manager.isMuted = false
+        assertFalse("returning to a video keeps what the reader chose", manager.startsMuted(false))
     }
 
     @Test

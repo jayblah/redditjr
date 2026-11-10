@@ -3043,8 +3043,8 @@ public class PostDetailRecyclerViewAdapterNew extends RecyclerView.Adapter<Recyc
                                 String mimeType = trackGroups.get(i).getTrackFormat(0).sampleMimeType;
                                 if (mimeType != null && mimeType.contains("audio")) {
                                     if (mVideoMuteManager.getMasterMutingOption() != null) {
-                                        // Remembering the reader's choice never lifts Mute Videos
-                                        // or Mute NSFW Videos, as it does not in the feed.
+                                        // Remembering the reader's choice never lifts Mute NSFW
+                                        // Videos, as it does not in the feed.
                                         volume = mVideoMuteManager.getMasterMutingOption()
                                                 || mVideoMuteManager.forcesMute(mPost.isNSFW()) ? 0f : 1f;
                                     }

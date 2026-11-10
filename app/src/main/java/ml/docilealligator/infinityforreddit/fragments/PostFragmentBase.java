@@ -549,7 +549,7 @@ public abstract class PostFragmentBase extends Fragment {
         return mVideoMuteManager.getMasterMutingOption();
     }
 
-    /** Mute Videos, or Mute NSFW Videos on an NSFW post: silent whatever the remembered choice is. */
+    /** Mute NSFW Videos on an NSFW post: silent whatever the remembered choice is. */
     public final boolean forcesMute(boolean isNsfw) {
         return mVideoMuteManager.forcesMute(isNsfw);
     }
