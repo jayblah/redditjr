@@ -247,22 +247,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
      */
 
     /**
-     * This keeps a reference to the child dragged by the user. Even after user stops dragging,
-     * until view reaches its final position (end of recover animation), we keep a reference so
-     * that it can be drawn above other children.
-     */
-    @SuppressWarnings("WeakerAccess") /* synthetic access */
-            View mOverdrawChild = null;
-
-    /**
-     * We cache the position of the overdraw child to avoid recalculating it each time child
-     * position callback is called. This value is invalidated whenever a child is attached or
-     * detached.
-     */
-    @SuppressWarnings("WeakerAccess") /* synthetic access */
-            int mOverdrawChildPosition = -1;
-
-    /**
      * Used to detect long press.
      */
     @SuppressWarnings("WeakerAccess") /* synthetic access */
@@ -457,8 +441,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
             mCallback.clearView(mRecyclerView, recoverAnimation.mViewHolder);
         }
         mRecoverAnimations.clear();
-        mOverdrawChild = null;
-        mOverdrawChildPosition = -1;
         releaseVelocityTracker();
         stopGestureDetection();
     }
@@ -511,8 +493,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
     @Override
     @SuppressLint("UnknownNullness") // b/240775049: Cannot annotate properly
     public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        // we don't know if RV changed something so we should invalidate this index.
-        mOverdrawChildPosition = -1;
         float dx = 0, dy = 0;
         if (mSelected != null) {
             getSelectedDxDy(mTmpPosition);
@@ -544,11 +524,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
             if (selected == null) {
                 throw new IllegalArgumentException("Must pass a ViewHolder when dragging");
             }
-
-            // we remove after animation is complete. this means we only elevate the last drag
-            // child but that should perform good enough as it is very hard to start dragging a
-            // new child before the previous one settles.
-            mOverdrawChild = selected.itemView;
         }
         int actionStateMask = (1 << (DIRECTION_FLAG_COUNT + DIRECTION_FLAG_COUNT * actionState))
                 - 1;
@@ -615,10 +590,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
                                 postDispatchSwipe(this, swipeDir);
                             }
                         }
-                        // removed from the list after it is drawn for the last time
-                        if (mOverdrawChild == prevSelected.itemView) {
-                            removeChildDrawingOrderCallbackIfNecessary(prevSelected.itemView);
-                        }
                     }
                 };
                 final long duration = mCallback.getAnimationDuration(mRecyclerView, animationType,
@@ -628,7 +599,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
                 rv.start();
                 preventLayout = true;
             } else {
-                removeChildDrawingOrderCallbackIfNecessary(prevSelected.itemView);
                 mCallback.clearView(mRecyclerView, prevSelected);
             }
             mSelected = null;
@@ -858,7 +828,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
     // Compares object identity deliberately (View/ViewHolder/Fragment/Node identity); these types do not override equals().
     @SuppressWarnings("ReferenceEquality")
     public void onChildViewDetachedFromWindow(@NonNull View view) {
-        removeChildDrawingOrderCallbackIfNecessary(view);
         final RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(view);
         if (holder == null) {
             return;
@@ -1256,13 +1225,6 @@ public class AdjustableTouchSlopItemTouchHelper extends RecyclerView.ItemDecorat
             }
         }
         return 0;
-    }
-
-    @SuppressWarnings({"WeakerAccess", "ReferenceEquality"}) /* synthetic access */
-    void removeChildDrawingOrderCallbackIfNecessary(View view) {
-        if (view == mOverdrawChild) {
-            mOverdrawChild = null;
-        }
     }
 
     /**
