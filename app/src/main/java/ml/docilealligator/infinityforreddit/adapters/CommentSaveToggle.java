@@ -1,6 +1,7 @@
 package ml.docilealligator.infinityforreddit.adapters;
 
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import com.google.android.material.button.MaterialButton;
 import java.util.function.IntSupplier;
 import ml.docilealligator.infinityforreddit.R;
@@ -26,7 +27,7 @@ final class CommentSaveToggle {
      * comment by the time the reply lands is left alone.
      */
     static void toggleSave(BaseActivity activity, String accountName, Retrofit oauthRetrofit,
-                           String accessToken, Comment comment, MaterialButton saveButton,
+                           @Nullable String accessToken, Comment comment, MaterialButton saveButton,
                            int position, IntSupplier currentPosition) {
         if (accountName.equals(Account.ANONYMOUS_ACCOUNT)) {
             // Logged out there is no account to save to, so the save is kept on the
