@@ -136,8 +136,6 @@ public class PostFragment extends PostFragmentBase implements FragmentCommunicat
     private static final String SORT_TIME_STATE = "STMS";
     private static final String RECYCLER_VIEW_POSITION_STATE = "RVPS";
     private static final String RECYCLER_VIEW_POSITION_OFFSET_STATE = "RVPOS";
-    private static final String RECYCLER_VIEW_USER_ANCHOR_STATE = "RVUA";
-    private static final String RECYCLER_VIEW_USER_ANCHOR_OFFSET_STATE = "RVUAO";
     private static final String POST_FILTER_STATE = "PFS";
     private static final String CONCATENATED_SUBREDDIT_NAMES_STATE = "CSNS";
     private static final String POST_FRAGMENT_ID_STATE = "PFIS";
@@ -149,14 +147,6 @@ public class PostFragment extends PostFragmentBase implements FragmentCommunicat
     // JSON serialization of every loaded post, so it is worth doing often enough to survive a kill
     // and no oftener.
     private static final long RESUME_STORE_THROTTLE_MS = 5000L;
-
-    // The user's "intended" anchor position + offset, persisted across rotation round-trips.
-    // The offset is sticky: it's only re-captured when the anchor item itself changes (the
-    // user scrolled away). This preserves the original offset through the lossy multi-col
-    // intermediate, where StaggeredGridLayoutManager's gap-handling snaps the anchor to the
-    // top and would otherwise overwrite the good offset with the snapped one.
-    private int userAnchorPos = RecyclerView.NO_POSITION;
-    private int userAnchorOffset = 0;
 
     /**
      * Non-null when this feed is a random tab -- the pseudo-name it was created with
@@ -316,9 +306,6 @@ public class PostFragment extends PostFragmentBase implements FragmentCommunicat
         if (savedInstanceState != null) {
             recyclerViewPosition = savedInstanceState.getInt(RECYCLER_VIEW_POSITION_STATE);
             recyclerViewPositionOffset = savedInstanceState.getInt(RECYCLER_VIEW_POSITION_OFFSET_STATE);
-            userAnchorPos = savedInstanceState.getInt(
-                    RECYCLER_VIEW_USER_ANCHOR_STATE, RecyclerView.NO_POSITION);
-            userAnchorOffset = savedInstanceState.getInt(RECYCLER_VIEW_USER_ANCHOR_OFFSET_STATE, 0);
 
             isInLazyMode = savedInstanceState.getBoolean(IS_IN_LAZY_MODE_STATE);
             postFilter = savedInstanceState.getParcelable(POST_FILTER_STATE);
@@ -327,8 +314,6 @@ public class PostFragment extends PostFragmentBase implements FragmentCommunicat
         } else {
             recyclerViewPosition = 0;
             recyclerViewPositionOffset = 0;
-            userAnchorPos = RecyclerView.NO_POSITION;
-            userAnchorOffset = 0;
             postFilter = getArguments().getParcelable(EXTRA_FILTER);
             postFragmentId = System.currentTimeMillis() + new Random().nextInt(1000);
         }
@@ -1594,16 +1579,11 @@ public class PostFragment extends PostFragmentBase implements FragmentCommunicat
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_IN_LAZY_MODE_STATE, isInLazyMode);
 
-        ScrollAnchor.Anchor anchor = ScrollAnchor.capture(
-                binding.recyclerViewPostFragment, userAnchorPos, userAnchorOffset);
-        userAnchorPos = anchor.stickyPosition;
-        userAnchorOffset = anchor.stickyOffset;
+        ScrollAnchor.Anchor anchor = ScrollAnchor.capture(binding.recyclerViewPostFragment);
 
         if (anchor.isValid()) {
             outState.putInt(RECYCLER_VIEW_POSITION_STATE, anchor.position);
             outState.putInt(RECYCLER_VIEW_POSITION_OFFSET_STATE, anchor.offset);
-            outState.putInt(RECYCLER_VIEW_USER_ANCHOR_STATE, userAnchorPos);
-            outState.putInt(RECYCLER_VIEW_USER_ANCHOR_OFFSET_STATE, userAnchorOffset);
         }
 
         outState.putParcelable(POST_FILTER_STATE, postFilter);

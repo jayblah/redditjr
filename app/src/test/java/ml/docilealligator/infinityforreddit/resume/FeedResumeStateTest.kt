@@ -22,7 +22,7 @@ import org.robolectric.annotation.Config
 class FeedResumeStateTest {
 
     private fun anchor(position: Int, offset: Int) =
-        ScrollAnchor.Anchor(position, offset, position, offset)
+        ScrollAnchor.Anchor(position, offset)
 
     @Test
     fun `a record survives being written and read`() {
@@ -55,8 +55,7 @@ class FeedResumeStateTest {
         // say where in it the user was would reopen that feed at the top, and writing it would
         // overwrite a good record from a moment ago.
         val out = Bundle()
-        val invalid = ScrollAnchor.Anchor(
-            ScrollAnchor.NO_POSITION, 0, ScrollAnchor.NO_POSITION, 0)
+        val invalid = ScrollAnchor.Anchor(ScrollAnchor.NO_POSITION, 0)
 
         assertFalse(FeedResumeState.capture(out, "feed", invalid, "t3_abc", 100))
         assertTrue(out.isEmpty)
