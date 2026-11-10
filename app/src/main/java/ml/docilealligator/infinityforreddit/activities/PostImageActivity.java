@@ -644,7 +644,6 @@ public class PostImageActivity extends BaseActivity implements FlairBottomSheetF
 
             int contentEstimatedBytes = 0;
             PersistableBundle extras = new PersistableBundle();
-            //TODO estimate image size
             extras.putString(SubmitPostService.EXTRA_MEDIA_URI, imageUri.toString());
             extras.putString(SubmitPostService.EXTRA_ACCOUNT, selectedAccount.getJSONModel());
             extras.putString(SubmitPostService.EXTRA_SUBREDDIT_NAME, subredditName);
@@ -682,7 +681,6 @@ public class PostImageActivity extends BaseActivity implements FlairBottomSheetF
                 extras.putInt(SubmitPostService.EXTRA_POST_TYPE, SubmitPostService.EXTRA_POST_TYPE_IMAGE);
             }
 
-            // TODO: contentEstimatedBytes
             JobInfo jobInfo = SubmitPostService.constructJobInfo(this, contentEstimatedBytes, extras);
             ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

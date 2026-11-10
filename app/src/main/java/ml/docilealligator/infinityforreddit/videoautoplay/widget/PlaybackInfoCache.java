@@ -114,7 +114,6 @@ final class PlaybackInfoCache extends RecyclerView.AdapterDataObserver {
 
   @SuppressWarnings("unused")
   void onPlayerRecycled(ToroPlayer player) {
-    // TODO do anything here?
   }
 
   /// Adapter change events handling

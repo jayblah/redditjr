@@ -521,7 +521,6 @@ public class CustomizeThemeActivity extends BaseActivity {
     private void saveThemeOnline(CustomTheme customTheme, boolean anonymous) {
         Call<String> request;
         OnlineCustomThemeMetadata metadata = onlineCustomThemeMetadata;
-        // TODO server access token
         if (metadata != null) {
             request = onlineCustomThemesRetrofit.create(ServerAPI.class).modifyTheme(
                     APIUtils.getServerHeader("", accountName, anonymous),

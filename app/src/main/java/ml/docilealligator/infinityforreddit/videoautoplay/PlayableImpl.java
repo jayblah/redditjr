@@ -285,7 +285,6 @@ class PlayableImpl implements Playable {
         }
     }
 
-    // TODO [20180822] Double check this.
     private void ensureMediaSource() {
         // A player whose load failed sits in STATE_IDLE, and one that ran out sits in STATE_ENDED;
         // both keep their source marked prepared, and setPlayWhenReady() cannot move either out of

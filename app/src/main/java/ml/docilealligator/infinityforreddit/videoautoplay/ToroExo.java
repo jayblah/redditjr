@@ -168,7 +168,6 @@ public final class ToroExo {
      * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
      */
     public void cleanUp() {
-        // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
         for (Iterator<Map.Entry<ExoCreator, Pools.Pool<ExoPlayer>>> it =
              playerPools.entrySet().iterator(); it.hasNext(); ) {
             Pools.Pool<ExoPlayer> pool = it.next().getValue();

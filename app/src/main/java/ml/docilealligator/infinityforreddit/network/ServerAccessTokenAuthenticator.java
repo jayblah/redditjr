@@ -46,7 +46,6 @@ public class ServerAccessTokenAuthenticator implements Authenticator {
                 if (account == null) {
                     return null;
                 }
-                // TODO server access token
                 String accessTokenFromDatabase = account.getAccessToken();
                 if (accessToken.equals(accessTokenFromDatabase)) {
                     String newAccessToken = refreshAccessToken(account);
@@ -69,7 +68,6 @@ public class ServerAccessTokenAuthenticator implements Authenticator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
-        // TODO server refresh token
         String refreshToken = mRedditDataRoomDatabase.accountDao().getCurrentAccount().getRefreshToken();
 
         Call<String> accessTokenCall = retrofit.create(ServerAPI.class).refreshAccessToken(account.getAccountName(), refreshToken);
@@ -79,7 +77,6 @@ public class ServerAccessTokenAuthenticator implements Authenticator {
                 String newAccessToken = new JSONObject(response.body()).getString(APIUtils.ACCESS_TOKEN_KEY);
                 mRedditDataRoomDatabase.accountDao().updateAccessToken(account.getAccountName(), newAccessToken);
                 if (account.getAccountName().equals(mCurrentAccountSharedPreferences.getString(SharedPreferencesUtils.ACCOUNT_NAME, Account.ANONYMOUS_ACCOUNT))) {
-                    // TODO server access token
                     mCurrentAccountSharedPreferences.edit().putString(SharedPreferencesUtils.ACCESS_TOKEN, newAccessToken).apply();
                 }
 
