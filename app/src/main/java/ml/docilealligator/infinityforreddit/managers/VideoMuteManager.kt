@@ -4,12 +4,10 @@ import android.content.SharedPreferences
 import ml.docilealligator.infinityforreddit.utils.SharedPreferencesUtils
 
 /**
- * Decides whether an inline (feed or post detail) video starts silent. The settings rank:
+ * Decides whether an inline (feed or post detail) video starts silent:
  *
- * 1. **Mute NSFW Videos** on an NSFW post always wins ([forcesMute]). Nothing the reader remembers
- *    lifts it; they can still unmute that one video with its own button.
- * 2. **Remember Mute**, when on, lets the reader's last tap on any mute button decide.
- * 3. Otherwise the starting state is muted if **Mute Videos** or **Mute Autoplaying Videos** says
+ * 1. **Remember Mute**, when on, lets the reader's last tap on any mute button decide.
+ * 2. Otherwise the starting state is muted if **Mute Videos** or **Mute Autoplaying Videos** says
  *    so. With Remember Mute on they also set the state before the first tap.
  *
  * Mute Videos is a starting state, not a lock: it would otherwise silence a video the reader had
@@ -64,9 +62,5 @@ class VideoMuteManager(private val sharedPreferences: SharedPreferences) {
 
     fun getMasterMutingOption(): Boolean? = if (rememberMuteOption) isMuted else null
 
-    fun forcesMute(isNsfw: Boolean): Boolean =
-        isNsfw && sharedPreferences.getBoolean(SharedPreferencesUtils.MUTE_NSFW_VIDEO, false)
-
-    fun startsMuted(isNsfw: Boolean): Boolean =
-        forcesMute(isNsfw) || (getMasterMutingOption() ?: mutesAutoplayByDefault)
+    fun startsMuted(): Boolean = getMasterMutingOption() ?: mutesAutoplayByDefault
 }

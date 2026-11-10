@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-/** The ranking of the four mute settings: Mute Videos and Mute NSFW first, then Remember, then Autoplay. */
+/** The ranking of the mute settings: a remembered tap first, then Mute Videos or Mute Autoplaying as the start. */
 @RunWith(RobolectricTestRunner::class)
 class VideoMuteManagerTest {
 
@@ -32,33 +32,16 @@ class VideoMuteManagerTest {
 
     @Test
     fun `autoplay starts muted by default and follows its setting`() {
-        assertTrue(manager.startsMuted(false))
+        assertTrue(manager.startsMuted())
         set(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, false)
-        assertFalse(manager.startsMuted(false))
+        assertFalse(manager.startsMuted())
     }
 
     @Test
     fun `Mute Videos starts autoplay muted whatever Mute Autoplaying says`() {
         set(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, false)
         set(SharedPreferencesUtils.MUTE_VIDEO, true)
-        assertTrue(manager.startsMuted(false))
-    }
-
-    @Test
-    fun `Mute NSFW only touches NSFW posts`() {
-        set(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, false)
-        set(SharedPreferencesUtils.MUTE_NSFW_VIDEO, true)
-        assertTrue(manager.startsMuted(true))
-        assertFalse(manager.startsMuted(false))
-    }
-
-    @Test
-    fun `a remembered unmute does not lift Mute NSFW`() {
-        set(SharedPreferencesUtils.MUTE_NSFW_VIDEO, true)
-        manager.rememberMuteOption = true
-        manager.isMuted = false
-        assertFalse(manager.startsMuted(false))
-        assertTrue(manager.startsMuted(true))
+        assertTrue(manager.startsMuted())
     }
 
     @Test
@@ -66,16 +49,16 @@ class VideoMuteManagerTest {
         set(SharedPreferencesUtils.MUTE_VIDEO, true)
         set(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, true)
         manager.rememberMuteOption = true
-        assertTrue("before any tap the settings decide", manager.startsMuted(false))
+        assertTrue("before any tap the settings decide", manager.startsMuted())
         manager.isMuted = false
-        assertFalse("returning to a video keeps what the reader chose", manager.startsMuted(false))
+        assertFalse("returning to a video keeps what the reader chose", manager.startsMuted())
     }
 
     @Test
     fun `a remembered choice replaces the Mute Autoplaying setting without rewriting it`() {
         manager.rememberMuteOption = true
         manager.isMuted = false
-        assertFalse(manager.startsMuted(false))
+        assertFalse(manager.startsMuted())
         assertTrue(prefs.getBoolean(SharedPreferencesUtils.MUTE_AUTOPLAYING_VIDEOS, true))
     }
 
@@ -83,7 +66,7 @@ class VideoMuteManagerTest {
     fun `without Remember Mute a tap changes nothing stored`() {
         manager.isMuted = false
         assertNull(manager.getMasterMutingOption())
-        assertTrue(manager.startsMuted(false))
+        assertTrue(manager.startsMuted())
         assertFalse(prefs.contains(SharedPreferencesUtils.REMEMBERED_MUTE_STATE))
     }
 

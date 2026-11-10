@@ -9,6 +9,9 @@
 * A removed crosspost whose parent was a video with nothing left to play dropped the whole post from the feed. It now shows as a plain link post
 * On tablets, Settings > Video was missing Automatic Landscape Orientation and Play Short Clip Hosts Inline, and Settings > Post Details was missing Hide Vote Buttons
 
+**Removed**
+* Mute NSFW Videos in Settings > Video. Mute Videos and Remember Mute cover it, and the switch only complicated how they interact. Videos on NSFW posts now follow the same mute settings as every other video
+
 ---
 
 8.3.3.9.1.34 / 2026-11-10

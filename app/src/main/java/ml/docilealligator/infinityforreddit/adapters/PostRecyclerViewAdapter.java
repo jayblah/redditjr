@@ -1211,9 +1211,8 @@ public class PostRecyclerViewAdapter extends PagingDataAdapter<Post, RecyclerVie
                                 .listener(toroPlayer.previewRequestListener)
                                 .into(toroPlayer.previewImageView);
                     }
-                    asVideo.toroPlayer.setForceMuted(mFragment.forcesMute(post.isNSFW()));
                     if (!asVideo.toroPlayer.isManuallyPaused) {
-                        asVideo.toroPlayer.setVolume(mFragment.startsMuted(post.isNSFW()) ? 0f : 1f);
+                        asVideo.toroPlayer.setVolume(mFragment.startsMuted() ? 0f : 1f);
                     }
 
                     asVideo.toroPlayer.loadVideo();
