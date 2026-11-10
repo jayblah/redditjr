@@ -8,6 +8,7 @@
 * Reddit gallery videos ignored Settings > Video > Default Playback Speed and always started at normal speed. Imgur album videos applied it, but also reset a speed you had picked back to the default whenever the screen was rotated. Both now start at the default and keep your pick through a rotation
 
 **Changed**
+* The Imgur and Reddit gallery video pages now share one implementation, removing about 900 lines of near-identical code. Nothing was meant to change, except that a download or share that cannot start now says so with a message instead of doing nothing
 * Removed unused drawing-order bookkeeping from the feed's swipe-action touch helper. Nothing was meant to change
 * Removed the sticky scroll anchor from the feed. It only existed to survive the lossy rotation of the old multi-column feed; with one column the feed restores its place after a rotation from the most visible row alone. Nothing was meant to change
 
