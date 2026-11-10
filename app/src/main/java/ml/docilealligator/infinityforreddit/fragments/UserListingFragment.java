@@ -111,14 +111,7 @@ public class UserListingFragment extends Fragment implements FragmentCommunicato
                     return WindowInsetsCompat.CONSUMED;
                 }
             });
-            //binding.recyclerViewUserListingFragment.setPadding(0, 0, 0, mActivity.getNavBarHeight());
-        }/* else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && mSharedPreferences.getBoolean(SharedPreferencesUtils.IMMERSIVE_INTERFACE_KEY, true)) {
-            int navBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (navBarResourceId > 0) {
-                binding.recyclerViewUserListingFragment.setPadding(0, 0, 0, resources.getDimensionPixelSize(navBarResourceId));
-            }
-        }*/
+        }
 
         mLinearLayoutManager = new LinearLayoutManagerBugFixed(mActivity);
         binding.recyclerViewUserListingFragment.setLayoutManager(mLinearLayoutManager);

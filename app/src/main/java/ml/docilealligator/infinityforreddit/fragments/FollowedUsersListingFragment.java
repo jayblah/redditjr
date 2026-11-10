@@ -95,14 +95,7 @@ public class FollowedUsersListingFragment extends Fragment implements FragmentCo
                     return WindowInsetsCompat.CONSUMED;
                 }
             });
-            //binding.recyclerViewFollowedUsersListingFragment.setPadding(0, 0, 0, mActivity.getNavBarHeight());
-        }/* else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && mSharedPreferences.getBoolean(SharedPreferencesUtils.IMMERSIVE_INTERFACE_KEY, true)) {
-            int navBarResourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-            if (navBarResourceId > 0) {
-                binding.recyclerViewFollowedUsersListingFragment.setPadding(0, 0, 0, resources.getDimensionPixelSize(navBarResourceId));
-            }
-        }*/
+        }
 
         mGlide = Glide.with(this);
 
