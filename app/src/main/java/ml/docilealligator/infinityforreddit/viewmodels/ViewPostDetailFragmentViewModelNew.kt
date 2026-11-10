@@ -2001,7 +2001,6 @@ class ViewPostDetailFragmentViewModelNew(
                     }
                 }
             } ?: run {
-                // TODO PostModerationEvent.DeleteFailed
                 postModerationEventLiveData.postValue(
                     PostModerationEvent.DeleteFailed(
                         null, position

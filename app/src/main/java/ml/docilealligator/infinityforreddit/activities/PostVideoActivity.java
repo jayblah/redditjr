@@ -701,7 +701,6 @@ public class PostVideoActivity extends BaseActivity implements FlairBottomSheetF
 
             int contentEstimatedBytes = 0;
             PersistableBundle extras = new PersistableBundle();
-            //TODO estimate video size
             extras.putString(SubmitPostService.EXTRA_MEDIA_URI, videoUri.toString());
             extras.putString(SubmitPostService.EXTRA_ACCOUNT, selectedAccount.getJSONModel());
             extras.putString(SubmitPostService.EXTRA_SUBREDDIT_NAME, subredditName);
@@ -722,7 +721,6 @@ public class PostVideoActivity extends BaseActivity implements FlairBottomSheetF
             extras.putInt(SubmitPostService.EXTRA_RECEIVE_POST_REPLY_NOTIFICATIONS, binding.receivePostReplyNotificationsSwitchMaterialPostVideoActivity.isChecked() ? 1 : 0);
             extras.putInt(SubmitPostService.EXTRA_POST_TYPE, SubmitPostService.EXTRA_POST_TYPE_VIDEO);
 
-            // TODO: contentEstimatedBytes
             JobInfo jobInfo = SubmitPostService.constructJobInfo(this, contentEstimatedBytes, extras);
             ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

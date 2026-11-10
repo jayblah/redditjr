@@ -730,7 +730,6 @@ public class ViewRedditGalleryActivity extends AppCompatActivity
             }
         }
 
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadMediaService.constructGalleryDownloadAllMediaJobInfo(this, 5000000L * gallery.size(), post);
         ((JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 

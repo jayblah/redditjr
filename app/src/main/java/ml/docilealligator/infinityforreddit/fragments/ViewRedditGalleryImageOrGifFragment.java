@@ -480,7 +480,6 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
             return;
         }
 
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadMediaService.constructJobInfo(activity, 5000000, parentPost, galleryIndex);
         if (jobInfo != null) {
             ((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
@@ -503,8 +502,6 @@ public class ViewRedditGalleryImageOrGifFragment extends Fragment {
         return media.fileName;
     }
 
-    //TODO: Find a way to share original image, Glide messes with the size and quality,
-    // compression should be up to the app being shared with (WhatsApp for example)
     private void shareImage() {
         glide.asBitmap().load(media.hasFallback() ? media.fallbackUrl : media.url).into(new CustomTarget<Bitmap>() {
             @Override

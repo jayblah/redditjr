@@ -344,7 +344,6 @@ public class ViewRedditGalleryVideoFragment extends Fragment {
 
         // Call the constructJobInfo overload that takes the Post object and index
         // This overload handles the correct filename generation internally.
-        //TODO: contentEstimatedBytes
         JobInfo jobInfo = DownloadMediaService.constructJobInfo(activity, 5000000, parentPost, galleryIndex);
         ((JobScheduler) activity.getSystemService(Context.JOB_SCHEDULER_SERVICE)).schedule(jobInfo);
 
