@@ -181,7 +181,8 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     }
 
     public ExoPlayer getPlayer() {
-        return playable.player.getPlayer();
+        // playable.player is null once the helper has been released.
+        return playable.player == null ? null : playable.player.getPlayer();
     }
 
     // A proxy, to also hook into ToroPlayerHelper's state change event.
