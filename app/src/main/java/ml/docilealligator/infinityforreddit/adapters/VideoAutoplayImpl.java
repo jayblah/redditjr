@@ -222,12 +222,12 @@ public abstract class VideoAutoplayImpl implements ToroPlayer {
      */
     void applyMute(boolean mute) {
         volume = mute ? 0f : 1f;
-        if (helper != null && helper.getPlayer() != null) {
+        if (helper != null) {
             helper.setVolume(volume);
-            if (muteButton.getVisibility() == View.VISIBLE) {
-                muteButton.setImageDrawable(ContextCompat.getDrawable(mActivity,
-                        volume != 0f ? R.drawable.ic_unmute_24dp : R.drawable.ic_mute_24dp));
-            }
+        }
+        if (muteButton.getVisibility() == View.VISIBLE) {
+            muteButton.setImageDrawable(ContextCompat.getDrawable(mActivity,
+                    volume != 0f ? R.drawable.ic_unmute_24dp : R.drawable.ic_mute_24dp));
         }
     }
 

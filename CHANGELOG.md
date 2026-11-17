@@ -2,6 +2,13 @@
 
 ---
 
+8.3.3.9.1.36 / 2026-11-16
+============
+**Fixed**
+* Tapping the mute button on a feed video crashed the app when Remember Mute was on and another video in the feed had scrolled out of view
+
+---
+
 8.3.3.9.1.35 / 2026-11-10
 ============
 **Fixed**

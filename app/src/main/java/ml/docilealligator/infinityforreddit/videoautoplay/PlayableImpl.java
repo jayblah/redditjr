@@ -194,15 +194,21 @@ class PlayableImpl implements Playable {
     @CallSuper
     @Override
     public void setVolume(float volume) {
-        checkNotNull(player, "Playable#setVolume(): Player is null!");
+        // The player is gone while the video is released (scrolled away, or not yet prepared).
+        // Record the choice anyway: it is applied when the next player is created.
         playbackInfo.getVolumeInfo().setTo(volume == 0, volume);
-        ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
+        if (player != null) {
+            ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
+        }
     }
 
     @CallSuper
     @Override
     public float getVolume() {
-        return checkNotNull(player.getPlayer(), "Playable#getVolume(): Player is null!").getVolume();
+        if (player == null || player.getPlayer() == null) {
+            return playbackInfo.getVolumeInfo().getVolume();
+        }
+        return player.getPlayer().getVolume();
     }
 
     @Override
