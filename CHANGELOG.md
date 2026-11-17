@@ -2,6 +2,13 @@
 
 ---
 
+8.3.3.9.1.37 / 2026-11-16
+============
+**Changed**
+* The crash report button now fills in the issue's title and description as well as the logs and device details, so the required fields are no longer empty
+
+---
+
 8.3.3.9.1.36 / 2026-11-16
 ============
 **Fixed**

@@ -114,16 +114,20 @@ public class CrashReportsFragment extends Fragment {
     @SuppressWarnings("JdkObsolete")
     private boolean createGithubIssueWithLogs() {
         Intent intent = new Intent(getContext(), LinkResolverActivity.class);
-        String logs, device, version, androidVersion;
+        String logs, device, version, androidVersion, title, description;
         try {
             List<String> logLines = CrashyReporter.INSTANCE.getLogsAsStrings();
             if (logLines == null) {
                 return false;
             }
             String rawLogs = String.join("\n", logLines);
-            // limit size to 6800 characters to avoid `414 URI Too Long`
+            // Limit size to avoid `414 URI Too Long`. The title and description below take a
+            // few hundred characters of the same URL, so the logs give up that much.
             logs = URLEncoder.encode("```\n" + (rawLogs.isEmpty()
-                    ? "No logs found." : rawLogs.substring(0, Math.min(6800, rawLogs.length()))) + "\n```", "UTF-8");
+                    ? "No logs found." : rawLogs.substring(0, Math.min(6000, rawLogs.length()))) + "\n```", "UTF-8");
+            title = URLEncoder.encode(crashTitle(logLines), "UTF-8");
+            description = URLEncoder.encode("The app crashed. The logs and device details are "
+                    + "filled in below.\n\nWhat I was doing when it crashed:\n", "UTF-8");
             device = URLEncoder.encode(Build.MANUFACTURER + " " + Build.MODEL, "UTF-8");
             version = URLEncoder.encode(BuildConfig.VERSION_NAME, "UTF-8");
             androidVersion = URLEncoder.encode(Build.VERSION.RELEASE, "UTF-8");
@@ -132,11 +136,46 @@ public class CrashReportsFragment extends Fragment {
         }
         Uri githubIssueUri = Uri.parse(String.format(
                 "https://github.com/jayblah/redditjr/issues/new?template=bug_report.yml&labels=bug"
+                        + "&title=%s&description=%s"
                         + "&device=%s&android_version=%s&version=%s&logs=%s",
-                device, androidVersion, version, logs));
+                title, description, device, androidVersion, version, logs));
         intent.setData(githubIssueUri);
         startActivity(intent);
         return true;
+    }
+
+    /**
+     * An issue title from the newest crash report: its exception line and, when there is one, the
+     * first frame, e.g. {@code Crash: NullPointerException at ExoPlayerViewHelper.getPlayer}.
+     */
+    private static String crashTitle(List<String> logLines) {
+        String fallback = "Crash report";
+        if (logLines.isEmpty()) {
+            return fallback;
+        }
+        String[] lines = logLines.get(0).split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            if (!lines[i].contains("Stacktrace") || lines[i].contains("END")) {
+                continue;
+            }
+            if (i + 1 >= lines.length || lines[i + 1].trim().isEmpty()) {
+                return fallback;
+            }
+            // "java.lang.NullPointerException: message..." -> "NullPointerException"
+            String exception = lines[i + 1].trim().split(":")[0];
+            exception = exception.substring(exception.lastIndexOf('.') + 1);
+            String title = "Crash: " + exception;
+            if (i + 2 < lines.length && lines[i + 2].trim().startsWith("at ")) {
+                // "at pkg.Class.method(File.java:12)" -> "Class.method"
+                String frame = lines[i + 2].trim().substring(3).split("\\(")[0];
+                String[] parts = frame.split("\\.");
+                if (parts.length >= 2) {
+                    title += " at " + parts[parts.length - 2] + "." + parts[parts.length - 1];
+                }
+            }
+            return title;
+        }
+        return fallback;
     }
 
     @SuppressLint("RestrictedApi")
